@@ -6,25 +6,24 @@ using namespace std;
 
 GLfloat angle, fAspect;
 GLfloat obsX = 0;
-GLfloat obsY = 800;
-GLfloat obsZ = 800;
+GLfloat obsY = 3000;
+GLfloat obsZ = 1000;
+GLfloat obsEixo = 200;
 GLfloat alvoX = 0;
 GLfloat alvoY = 0;
 GLfloat alvoZ = 0;
-GLfloat vetX = 1;
+GLfloat vetX = 0;
 GLfloat vetY = 1;
 GLfloat vetZ = 0;
 GLfloat cam_near = 0.1;
-GLfloat cam_far = 5000.0;
+GLfloat cam_far = 100000000000000.0;
 
 GLfloat bolaX = 0;
 GLfloat bolaY = 0;
+GLfloat bolaZ = 0;
 
 // Variáveis para controle de câmera
 bool cameraTerceiraPessoa = true;
-
-// Parametros para animacao do planeta e do satelite
-GLfloat anguloRotacaoPlaneta = 0, anguloRotacaoSatelite = 0;
 
 void EspecificaParametrosVisualizacao(void)
 {
@@ -36,7 +35,7 @@ void EspecificaParametrosVisualizacao(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    gluLookAt(obsX, obsY, obsZ, alvoX, alvoY, alvoZ, vetX, vetY, vetZ);
+    gluLookAt(1, 5000, 0, 0, 0, 0, 0, 1, 0);
 }
 
 void Desenha(void)
@@ -45,7 +44,8 @@ void Desenha(void)
 
     if (cameraTerceiraPessoa) {
         glLoadIdentity();
-        gluLookAt(obsX, obsY, obsZ, bolaX, bolaY, 0, 0, 1, 0);
+		gluLookAt(bolaX+200, bolaY+400, bolaZ+200, bolaX, bolaY, bolaZ, vetX, vetY, vetZ);
+
     } else {
         EspecificaParametrosVisualizacao();
     }
@@ -62,7 +62,7 @@ void Desenha(void)
     // Bolinha
     glColor3f(1.0f, 0.0f, 0.0f);
     glPushMatrix();
-    glTranslatef(bolaX, bolaY, 50.0f);
+    glTranslatef(bolaX, bolaY, bolaZ);
     glutSolidSphere(20.0f, 20, 20);
     glPopMatrix();
 
@@ -109,12 +109,13 @@ void Def_Iluminacao() {
 	// Habilita o depth-buffering
 	glEnable(GL_DEPTH_TEST);
 }
+
 void Inicializa(void)
 {
     // Define iluminacao
     Def_Iluminacao();
 
-    angle = 90;
+    angle = 45;
 }
 
 
@@ -133,35 +134,17 @@ void GerenciaTeclado(unsigned char key, int x, int y)
 {
     switch (key)
     {
-    case ' ':
-        obsX = 0;
-        obsY = 800;
-        obsZ = 800;
-        alvoX = 0;
-        alvoY = 0;
-        alvoZ = 0;
-        vetX = 1;
-        vetY = 1;
-        vetZ = 0;
-        cameraTerceiraPessoa = true;
-        break;
     case 'd':
-        if (cameraTerceiraPessoa) bolaX += 50;
+        if (cameraTerceiraPessoa) obsEixo += 50;
         break;
     case 'a':
-        if (cameraTerceiraPessoa) bolaX -= 50;
+        if (cameraTerceiraPessoa) obsEixo -= 50;
         break;
     case 'w':
-        if (cameraTerceiraPessoa) bolaY += 50;
+        if (cameraTerceiraPessoa) bolaX += 50;
         break;
     case 's':
-        if (cameraTerceiraPessoa) bolaY -= 50;
-        break;
-    case 'q':
-        obsZ = obsZ + 50;
-        break;
-    case 'e':
-        obsZ = obsZ - 50;
+        if (cameraTerceiraPessoa) bolaX -= 50;
         break;
     case 'c':
         cameraTerceiraPessoa = !cameraTerceiraPessoa;
@@ -181,7 +164,7 @@ int main(int argc, char **argv)
     glutInitWindowPosition(700, 100);
     glutInitWindowSize(800, 600);
 
-    glutCreateWindow("Planetas");
+    glutCreateWindow("Paiolandia Escape");
 
     glutKeyboardFunc(GerenciaTeclado);
     glutDisplayFunc(Desenha);
