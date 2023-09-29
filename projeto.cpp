@@ -156,16 +156,16 @@ void GerenciaTeclado(unsigned char key, int x, int y)
     switch (key)
     {
     case 'd':
-        if (cameraTerceiraPessoa) bolaZ += 50;
-        break;
-    case 'a':
         if (cameraTerceiraPessoa) bolaZ -= 50;
         break;
+    case 'a':
+        if (cameraTerceiraPessoa) bolaZ += 50;
+        break;
     case 'w':
-        if (cameraTerceiraPessoa) bolaX += 50;
+        if (cameraTerceiraPessoa) bolaX -= 50;
         break;
     case 's':
-        if (cameraTerceiraPessoa) bolaX -= 50;
+        if (cameraTerceiraPessoa) bolaX += 50;
         break;
     case 'c':
         cameraTerceiraPessoa = !cameraTerceiraPessoa;
