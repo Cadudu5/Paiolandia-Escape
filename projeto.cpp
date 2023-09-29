@@ -10,7 +10,7 @@ GLfloat angle, fAspect;
 GLfloat obsX = 0;
 GLfloat obsY = 3000;
 GLfloat obsZ = 1000;
-GLfloat obsEixo = 200;
+//GLfloat obsEixo = 0;
 GLfloat alvoX = 0;
 GLfloat alvoY = 0;
 GLfloat alvoZ = 0;
@@ -39,6 +39,7 @@ void EspecificaParametrosVisualizacao(void)
 
     gluLookAt(1, 5000, 0, 0, 0, 0, 0, 1, 0);
 }
+
 
 void Desenha(void)
 {
@@ -137,10 +138,10 @@ void GerenciaTeclado(unsigned char key, int x, int y)
     switch (key)
     {
     case 'd':
-        if (cameraTerceiraPessoa) obsEixo += 50;
+        if (cameraTerceiraPessoa) bolaZ += 50;
         break;
     case 'a':
-        if (cameraTerceiraPessoa) obsEixo -= 50;
+        if (cameraTerceiraPessoa) bolaZ -= 50;
         break;
     case 'w':
         if (cameraTerceiraPessoa) bolaX += 50;
