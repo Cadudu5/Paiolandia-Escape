@@ -53,6 +53,24 @@ void Desenha(void)
         EspecificaParametrosVisualizacao();
     }
 
+    // Defina a espessura das linhas brancas
+    glLineWidth(5.0f);  // Ajuste o valor conforme necessário
+    // Desenhe as bordas do quadrado verde
+    glColor3f(1.0f, 1.0f, 1.0f);  // Cor das bordas (preto)
+    glBegin(GL_LINES);
+    glVertex3f(-1000.0f, 0.0f, -1000.0f);  // Linha inferior do quadrado
+    glVertex3f(1000.0f, 0.0f, -1000.0f);
+
+    glVertex3f(-1000.0f, 0.0f, 1000.0f);  // Linha superior do quadrado
+    glVertex3f(1000.0f, 0.0f, 1000.0f);
+
+    glVertex3f(-1000.0f, 0.0f, -1000.0f);  // Linha esquerda do quadrado
+    glVertex3f(-1000.0f, 0.0f, 1000.0f);
+
+    glVertex3f(1000.0f, 0.0f, -1000.0f);  // Linha direita do quadrado
+    glVertex3f(1000.0f, 0.0f, 1000.0f);
+    glEnd();
+
     // Desenhe o chão
     glColor3f(0.0f, 1.0f, 0.0f);
     glBegin(GL_QUADS);
