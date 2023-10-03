@@ -57,12 +57,12 @@ const int labirinto[50][50] = {
 };
 
 GLfloat angle, fAspect;
-GLfloat obsX = 0;
-GLfloat obsY = 3000;
-GLfloat obsZ = 1000;
-GLfloat alvoX = 0;
-GLfloat alvoY = 0;
-GLfloat alvoZ = 0;
+GLfloat obsX = 3401;
+GLfloat obsY = 7700;
+GLfloat obsZ = 3000;
+GLfloat alvoX = -1700;
+GLfloat alvoY = -41900;
+GLfloat alvoZ = 3000;
 GLfloat vetX = 0;
 GLfloat vetY = 1;
 GLfloat vetZ = 0;
@@ -85,7 +85,7 @@ void EspecificaParametrosVisualizacao(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    gluLookAt(1, 12000, 0, 0, 0, 0, 0, 1, 0);
+    gluLookAt(obsX, obsY, obsZ, alvoX, alvoY, alvoZ, 0, 1, 0);
 }
 
 void Desenha(void)
@@ -112,12 +112,14 @@ void Desenha(void)
         {
             if (labirinto[i][j] == 1)
             {
-                glBegin(GL_QUADS);
-                glVertex3f(j * 100.0f, 100.0f, i * 100.0f);
-                glVertex3f(j * 100.0f, 100.0f, (i + 1) * 100.0f);
-                glVertex3f((j + 1) * 100.0f, 100.0f, (i + 1) * 100.0f);
-                glVertex3f((j + 1) * 100.0f, 100.0f, i * 100.0f);
-                glEnd();
+                for (int k = 0; k<200; k++){
+                    glBegin(GL_QUADS);
+                    glVertex3f(j * 100.0f, k, i * 100.0f);
+                    glVertex3f(j * 100.0f, k, (i + 1) * 100.0f);
+                    glVertex3f((j + 1) * 100.0f, k, (i + 1) * 100.0f);
+                    glVertex3f((j + 1) * 100.0f, k, i * 100.0f);
+                    glEnd();
+                }
             }
         }
     }
@@ -222,6 +224,59 @@ void GerenciaTeclado(unsigned char key, int x, int y)
         break;
     case 'c':
         cameraTerceiraPessoa = !cameraTerceiraPessoa;
+        break;
+
+    case 'y':
+        obsX += 100;
+        break;
+    case 'u':
+        obsX -= 100;
+        break;
+    case 'i':
+        obsY += 100;
+        break;
+    case 'o':
+        obsY -= 100;
+        break;
+    case 'h':
+        obsZ += 100;
+        break;
+    case 'j':
+        obsZ -= 100;
+        break;
+    case 'k':
+        alvoX += 100;
+        break;
+    case 'l':
+        alvoX -= 100;
+        break;
+    case 'v':
+        alvoY += 100;
+        break;
+    case 'b':
+        alvoY -= 100;
+        break;
+    case 'n':
+        alvoZ += 100;
+        break;
+    case 'm':
+        alvoZ -= 100;
+        break;
+    case 'z':
+         obsX = 3201;
+ obsY = 5900;
+ obsZ = 3000;
+ alvoX = 200;
+ alvoY = -21000;
+ alvoZ = 3000;
+        break;
+    case 'f':
+        cout<< "obsX = "<< obsX << "\n";
+        cout<< "obsY = "<< obsY << "\n";
+        cout<< "obsZ = "<< obsZ << "\n";
+        cout<< "alvoX = "<< alvoX << "\n";
+        cout<< "alvoY = "<< alvoY << "\n";
+        cout<< "alvoZ = "<< alvoZ<< "\n";
         break;
     }
 
