@@ -1,5 +1,6 @@
 #include <GL/glut.h>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -69,9 +70,16 @@ GLfloat vetZ = 0;
 GLfloat cam_near = 0.1;
 GLfloat cam_far = 100000000000000.0;
 
-GLfloat bolaX = 100;
+GLfloat bolaX = 150;
 GLfloat bolaY = 20;
 GLfloat bolaZ = 100;
+GLfloat cameraX = 0;
+GLfloat cameraZ = -200;
+
+GLfloat cameraRotationAngle = 0.0f;
+
+
+bool eixoCamera = false;
 
 bool cameraTerceiraPessoa = true;
 
@@ -88,6 +96,19 @@ void EspecificaParametrosVisualizacao(void)
     gluLookAt(obsX, obsY, obsZ, alvoX, alvoY, alvoZ, 0, 1, 0);
 }
 
+void AtualizaCameraTerceiraPessoa()
+{
+    GLfloat distanciaCamera = 200.0f;
+
+    // Calcular as coordenadas da câmera em torno da bola
+    GLfloat cameraPosX = bolaX + distanciaCamera * sin(cameraRotationAngle);
+    GLfloat cameraPosY = bolaY + 400;
+    GLfloat cameraPosZ = bolaZ + distanciaCamera * cos(cameraRotationAngle);
+
+    // Atualizar a câmera
+    gluLookAt(cameraPosX, cameraPosY, cameraPosZ, bolaX, bolaY, bolaZ, vetX, vetY, vetZ);
+}
+
 void Desenha(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -95,7 +116,7 @@ void Desenha(void)
     if (cameraTerceiraPessoa)
     {
         glLoadIdentity();
-        gluLookAt(bolaX + 200, bolaY + 400, bolaZ + 200, bolaX, bolaY, bolaZ, vetX, vetY, vetZ);
+        AtualizaCameraTerceiraPessoa();
     }
     else
     {
@@ -203,80 +224,56 @@ void GerenciaTeclado(unsigned char key, int x, int y)
 {
     GLfloat novaPosX = bolaX;
     GLfloat novaPosZ = bolaZ;
-
+    
     switch (key)
     {
-    case 'd':
-        if (cameraTerceiraPessoa)
-            novaPosZ -= 50;
-        break;
+    
     case 'a':
         if (cameraTerceiraPessoa)
-            novaPosZ += 50;
+        {
+            cameraRotationAngle -= 1.5708f; // Rotacionar 90 graus no sentido horário (1.5708 radianos)
+            if (cameraRotationAngle < 0)
+                cameraRotationAngle += 6.2832f; // 360 graus em radianos
+            eixoCamera = !eixoCamera;
+        }
+        break;
+    case 'd':
+        if (cameraTerceiraPessoa)
+        {
+            cameraRotationAngle += 1.5708f; // Rotacionar 90 graus no sentido anti-horário (1.5708 radianos)
+            if (cameraRotationAngle >= 6.2832f)
+                cameraRotationAngle -= 6.2832f; // 360 graus em radianos
+            eixoCamera = !eixoCamera;
+        }
         break;
     case 'w':
-        if (cameraTerceiraPessoa)
-            novaPosX -= 50;
+        if (cameraTerceiraPessoa && eixoCamera)
+            if (cameraRotationAngle > 3)
+                novaPosX += 30;
+            else
+                novaPosX -= 30;
+        else if (cameraTerceiraPessoa)
+            if (cameraRotationAngle > 3)
+                novaPosZ += 30;
+            else
+                novaPosZ -= 30;
         break;
     case 's':
-        if (cameraTerceiraPessoa)
-            novaPosX += 50;
+        if (cameraTerceiraPessoa && eixoCamera){
+            if (cameraRotationAngle > 3)
+                novaPosX -= 30;
+            else
+                novaPosX += 30;
+        }
+        else if (cameraTerceiraPessoa)
+            if (cameraRotationAngle > 3)
+                novaPosZ -= 30;
+            else
+                novaPosZ += 30;
+            
         break;
     case 'c':
         cameraTerceiraPessoa = !cameraTerceiraPessoa;
-        break;
-
-    case 'y':
-        obsX += 100;
-        break;
-    case 'u':
-        obsX -= 100;
-        break;
-    case 'i':
-        obsY += 100;
-        break;
-    case 'o':
-        obsY -= 100;
-        break;
-    case 'h':
-        obsZ += 100;
-        break;
-    case 'j':
-        obsZ -= 100;
-        break;
-    case 'k':
-        alvoX += 100;
-        break;
-    case 'l':
-        alvoX -= 100;
-        break;
-    case 'v':
-        alvoY += 100;
-        break;
-    case 'b':
-        alvoY -= 100;
-        break;
-    case 'n':
-        alvoZ += 100;
-        break;
-    case 'm':
-        alvoZ -= 100;
-        break;
-    case 'z':
-         obsX = 3201;
- obsY = 5900;
- obsZ = 3000;
- alvoX = 200;
- alvoY = -21000;
- alvoZ = 3000;
-        break;
-    case 'f':
-        cout<< "obsX = "<< obsX << "\n";
-        cout<< "obsY = "<< obsY << "\n";
-        cout<< "obsZ = "<< obsZ << "\n";
-        cout<< "alvoX = "<< alvoX << "\n";
-        cout<< "alvoY = "<< alvoY << "\n";
-        cout<< "alvoZ = "<< alvoZ<< "\n";
         break;
     }
 
