@@ -57,7 +57,15 @@ const int labirinto[50][50] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 };
 
+struct Point {
+    float x, y, z;
+};
+
+
+bool gameOver = false;
 GLfloat angle, fAspect;
+GLfloat pontoX = 0;
+GLfloat pontoY = 0;
 GLfloat obsX = 3401;
 GLfloat obsY = 7700;
 GLfloat obsZ = 3000;
@@ -75,6 +83,11 @@ GLfloat bolaY = 20;
 GLfloat bolaZ = 100;
 GLfloat cameraX = 0;
 GLfloat cameraZ = -200;
+
+GLfloat cuboX = 5000.0f;
+GLfloat cuboY = 25.0f;
+GLfloat cuboZ = 5000.0f;
+GLfloat cuboLado = 50.0f;
 
 GLfloat cameraRotationAngle = 0.0f;
 
@@ -109,6 +122,29 @@ void AtualizaCameraTerceiraPessoa()
     gluLookAt(cameraPosX, cameraPosY, cameraPosZ, bolaX, bolaY, bolaZ, vetX, vetY, vetZ);
 }
 
+void VerificarColisao(GLfloat bolaX, GLfloat bolaY, GLfloat bolaZ, GLfloat cuboX, GLfloat cuboY, GLfloat cuboZ, GLfloat cuboLado) {
+    
+    // Verificar colisão
+    if (bolaX >= cuboX - cuboLado && bolaX <= cuboX + cuboLado &&
+        bolaY >= cuboY - cuboLado && bolaY <= cuboY + cuboLado &&
+        bolaZ >= cuboZ - cuboLado && bolaZ <= cuboZ + cuboLado) {
+        // Colisão detectada, implemente a lógica aqui
+        std::cout << "Game Over" << std::endl;
+        exit(0);
+        // Você pode adicionar código para lidar com a colisão, como encerrar o jogo ou mostrar uma mensagem
+    }
+}
+
+void DesenharTexto(const char* texto, GLfloat x, GLfloat y) {
+    glRasterPos2f(x, y);
+
+    // Itera sobre cada caractere da string e desenha na tela
+    for (const char* c = texto; *c != '\0'; ++c) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+    }
+}
+
+
 void Desenha(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -124,6 +160,7 @@ void Desenha(void)
     }
 
     // Labirinto
+    
     glLineWidth(5.0f);
     glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -144,6 +181,34 @@ void Desenha(void)
             }
         }
     }
+
+    glColor3f(1.0f, 1.0f, 0.0f); // Cor amarela
+
+    // Posição do cubo amarelo na outra extremidade do quadrado verde em relação à bola vermelha
+    //float cuboX = 5100 - bolaX;
+    //float cuboZ = 5100 - bolaZ;
+
+       // Posição inicial do cubo amarelo ao lado da bola vermelha
+    glColor3f(1.0f, 1.0f, 0.0f); // Cor amarela
+
+    // Posição fixa do cubo amarelo em relação às coordenadas do mundo
+    float cuboX = 3200.0f;
+    float cuboY = 25.0f; // Altura do cubo em relação ao chão
+    float cuboZ = 4000.0f;
+
+    /*para facilitar os testes, ponto de chegada no inicio*/
+    /*
+    float cuboX = 200.0f;
+    float cuboY = 25.0f; // Altura do cubo em relação ao chão
+    float cuboZ = 200.0f;
+    */
+    
+
+    glPushMatrix();
+    glTranslatef(cuboX, cuboY, cuboZ); // Posição do cubo amarelo
+    glutSolidCube(50.0f); // Desenha um cubo com lado de 50 unidades
+    glPopMatrix();
+
     //base
     glColor3f(0.0f, 1.0f, 0.0f);
     glBegin(GL_QUADS);
@@ -153,11 +218,24 @@ void Desenha(void)
     glVertex3f(5100.0f, 0.0f, 5100.0f);
     glEnd();
 
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glPushMatrix();
-    glTranslatef(bolaX, bolaY, bolaZ);
-    glutSolidSphere(20.0f, 20, 20);
-    glPopMatrix();
+
+
+    if (!gameOver) {
+        //desenha bola
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glPushMatrix();
+        glTranslatef(bolaX, bolaY, bolaZ);
+        glutSolidSphere(20.0f, 20, 20);
+        glPopMatrix();
+
+        VerificarColisao(bolaX, bolaY, bolaZ, cuboX, cuboY, cuboZ, 25.0);
+    } else {
+        // Exibir mensagem "Game Over"
+        // Agora, renderize a mensagem "Game Over" se houver colisão
+        if (gameOver) {
+            exit(0);
+        }
+    }
 
     glutSwapBuffers();
 }
@@ -219,6 +297,8 @@ bool ColisaoComParede(GLfloat x, GLfloat z)
         return false;
     }
 }
+
+
 
 void GerenciaTeclado(unsigned char key, int x, int y)
 {
@@ -283,9 +363,13 @@ void GerenciaTeclado(unsigned char key, int x, int y)
         bolaZ = novaPosZ;
     }
 
+
     EspecificaParametrosVisualizacao();
     glutPostRedisplay();
 }
+
+
+
 
 int main(int argc, char **argv)
 {
@@ -299,5 +383,6 @@ int main(int argc, char **argv)
     glutReshapeFunc(AlteraTamanhoJanela);
     Inicializa();
     glutMainLoop();
+    
     return 0;
 }
